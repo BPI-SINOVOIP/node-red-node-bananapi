@@ -102,14 +102,34 @@ module.exports = function (RED) {
     function LedOut(n) {
         RED.nodes.createNode(this, n);
         this.updateInterval = n.updateInterval || 1000;
+        this.device = n.device || {};
         this.mode = n.mode || "default-on";
 
         var node = this;
 
         this.on("input", function(msg) {
+            var dev = 'green_led';
+            //var dev = 'green:ph24:led1';
+            //console.log('BPI: LED node.device:' + node.device);
+            if (node.device != undefined) {
+              dev = node.device;
+            }
+            var device = "/sys/class/leds/" + dev + "/trigger";
             var status = msg.payload == 1 || msg.payload == true;
-            fs.writeFile("/sys/class/leds/green:ph24:led1/trigger", status ? node.mode : "none", function(err) {
-                if (err) { node.error("Set led status error", err); }
+            //console.log('BPI: LED ' + device + " : " + node.mode);
+            var mode = "none";
+            if (status) {
+              mode = node.mode;
+              node.status({fill:"green",shape:"ring",text: mode});
+            }
+            else {
+              node.status({fill:"red",shape:"ring",text: mode});
+            }
+            fs.writeFile(device, mode, function(err) {
+                if (err) { 
+                   node.error("Set led status error", err);
+                   node.status({fill:"red",shape:"ring",text: mode});
+                }
             });
         });
 

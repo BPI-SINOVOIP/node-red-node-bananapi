@@ -77,6 +77,10 @@
 <script type="text/x-red" data-template-name="LedStatus out">
 
     <div class="form-row">
+        <label for="node-input-device"><i class="icon-tag"></i> Device</label>
+        <input type="text" id="node-input-device" placeholder="green_led">
+    </div>
+    <div class="form-row">
         <label for="node-input-mode"><i class="fa fa-wrench"></i> Led mode</label>
         <select type="text" id="node-input-mode" style="display: inline-block; vertical-align: top;">
             <option value="default-on">Simple light</option>
@@ -115,6 +119,7 @@
         color: "#E7E7AE",
         defaults: {
             name: {value: ""},
+            device: {value: "green_led", required: true},
             mode: {value: "default-on", required: true}
         },
         inputs: 1,
